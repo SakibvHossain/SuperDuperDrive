@@ -1,10 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import com.google.gson.annotations.Until;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -47,7 +45,7 @@ class CloudStorageApplicationTests {
 	@Test
 	public void Verifying(){
 		checkingUnauthorizedAccessTest();
-		authorizingUserTest("as","as","as","as");
+		authorizingUserTest("ai","ai","ai","ai");
 	}
 
 	//Point - 1: Write a test that verifies that an unauthorized user can only access the login and signup pages.
