@@ -90,8 +90,8 @@
                                 <tbody>
                                 <tr th:each = "oneNote : ${noteList}">
                                     <td>
-                                        <button type="button" class="btn btn-success" th:onclick = "showNoteModal([[${oneNote.id}]], [[${oneNote.title}]], [[${oneNote.description}]])">Edit</button>
-                                        <a class="btn btn-danger" th:href="@{/home/note/delete/{noteId}(noteId=${oneNote.id})}">Delete</a>
+                                        <button id="note_editing" type="button" class="btn btn-success" th:onclick = "showNoteModal([[${oneNote.id}]], [[${oneNote.title}]], [[${oneNote.description}]])">Edit</button>
+                                        <a id="note_deleting" class="btn btn-danger" th:href="@{/home/note/delete/{noteId}(noteId=${oneNote.id})}">Delete</a>
                                     </td>
                                     <th scope="row" id="note_title_test" th:text = "${oneNote.title}">Example Note Title</th>
                                     <td id="note_description_test" th:text = "${oneNote.description}">Example Note Description </td>
@@ -137,7 +137,7 @@
 
                     <!-- Start of Credential Section-->
                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                        <button style="margin: 0.25em;" type="button" id="create_new_credential" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
 
@@ -154,12 +154,15 @@
                                 <tbody>
                                 <tr th:each = "cred : ${credentialList}">
                                     <td>
-                                        <button type="button" class="btn btn-success" th:onclick = "showCredentialModal([[${cred.credentialid}]], [[${cred.url}]], [[${cred.username}]], [[${cred.password}]])">Edit</button>
+                                        <button type="button" class="btn btn-success" th:onclick = "showCredentialModal([[${cred.credentialid}]], [[${cred.url}]], [[${cred.username}]], [[${cred.password}]])">
+                                            Edit
+                                        </button>
+<!--                                        <a class="btn btn-success" th:href="@{/home/credentialEdit}">Edit</a>-->
                                         <a class="btn btn-danger" th:href="@{/home/credential/delete/{credId}(credId=${cred.credentialid})}">Delete</a>
                                     </td>
-                                    <th scope="row" th:text = "${cred.url}" >Example Credential URL</th>
-                                    <td th:text = "${cred.username}" >Example Credential Username</td>
-                                    <td th:text = "${cred.password}">Example Credential Password</td>
+                                    <th scope="row" id="url_credential" th:text = "${cred.url}" >Example Credential URL</th>
+                                    <td id="username_credential" th:text = "${cred.username}" >Example Credential Username</td>
+                                    <td id="password_credential" th:text = "${cred.password}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -175,7 +178,6 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-
                                         <form th:object="${credentialForm}" action="#" th:action="@{/home}" method="POST">
                                             <input type="hidden" name="credentialId" id="credential-id" th:field = "*{id}">
                                             <div class="form-group">
@@ -195,7 +197,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
+                                        <button id="save_changes_credential" type="button"  class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>

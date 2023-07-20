@@ -1,8 +1,11 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.UserModel;
+import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,6 +24,7 @@ class CloudStorageApplicationTests {
 
 
 	private WebDriver driver;
+
 
 	@BeforeAll
 	static void beforeAll() {
@@ -134,30 +138,56 @@ class CloudStorageApplicationTests {
 	@Test
 	public void NoteTesting(){
 		signup_Login("as", "as", "as", "as");
-		creating_verifying_Notes();
+		creating_verifying_creating_deleting_Notes();
 	}
-
-	//Point - 1: Write a test that creates a note, and verifies it is displayed.
-	private void creating_verifying_Notes(){
+	private void creating_verifying_creating_deleting_Notes(){
 		WebDriverWait wait = new WebDriverWait(driver,2);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
-		WebElement nav_notes_tab = driver.findElement(By.id("nav-notes-tab"));
-		nav_notes_tab.click();
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("open-notes-form")));
-		WebElement open_notes_form = driver.findElement(By.id("open-notes-form"));
-		open_notes_form.click();
+		note_Basic_Input("SuperDuperNote","Lets write super duper notes!",true);
+		//Point - 1: Write a test that creates a note, and verifies it is displayed.
+		checkNotesAssertions("SuperDuperNote","Lets write super duper notes!");
 
-		//Title
+		//Point - 2: Write a test that edits an existing note and verifies that the changes are displayed.
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note_editing")));
+		WebElement note_editing = driver.findElement(By.id("note_editing"));
+		note_editing.click();
+
+		note_Basic_Input("Hey","Whats up",false);
+		checkNotesAssertions("Hey","Whats up");
+		//Done!
+		//Point - 3: Write a test that deletes a note and verifies that the note is no longer displayed.
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note_deleting")));
+		WebElement note_deleting = driver.findElement(By.id("note_deleting"));
+		note_deleting.click();
+
+		Assertions.assertThrows(NoSuchElementException.class, () -> {
+			WebElement find = driver.findElement(By.id("note_deleting"));
+		});
+	}
+	private void note_Basic_Input(String title, String description, Boolean isTrue){
+		WebDriverWait wait = new WebDriverWait(driver,2);
+		//Tab on Notes
+		if(isTrue){
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+			WebElement nav_notes_tab = driver.findElement(By.id("nav-notes-tab"));
+			nav_notes_tab.click();
+			//Click to create Notes
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("open-notes-form")));
+			WebElement open_notes_form = driver.findElement(By.id("open-notes-form"));
+			open_notes_form.click();
+		}
+		//Write something on title
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
 		WebElement note_title = driver.findElement(By.id("note-title"));
 		note_title.click();
-		note_title.sendKeys("SuperDuperNote");
-		//Description
+		note_title.clear();
+		note_title.sendKeys(title);
+		//Write something on Description
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
 		WebElement note_description = driver.findElement(By.id("note-description"));
 		note_description.click();
-		note_description.sendKeys("Lets write super duper notes!");
+		note_description.clear();
+		note_description.sendKeys(description);
 		//Save Changes
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-submitting")));
 		WebElement noteSubmit = driver.findElement(By.id("note-submitting"));
@@ -166,21 +196,115 @@ class CloudStorageApplicationTests {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
 		WebElement nav_notes_tab2 = driver.findElement(By.id("nav-notes-tab"));
 		nav_notes_tab2.click();
-
+	}
+	private void checkNotesAssertions(String match_title, String match_description){
+		WebDriverWait wait = new WebDriverWait(driver,2);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note_title_test")));
 		WebElement note_title_test = driver.findElement(By.id("note_title_test"));
 		String getThe_Title = note_title_test.getText();
 
-		Assertions.assertEquals("SuperDuperNote", getThe_Title);
+		Assertions.assertEquals(match_title, getThe_Title);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note_description_test")));
 		WebElement note_description_test = driver.findElement(By.id("note_description_test"));
 		String getThe_description = note_description_test.getText();
 
-		Assertions.assertEquals("Lets write super duper notes!", getThe_description);
+		Assertions.assertEquals(match_description, getThe_description);
 	}
-	//Point - 2: Write a test that edits an existing note and verifies that the changes are displayed.
-	//Point - 3: Write a test that deletes a note and verifies that the note is no longer displayed.
+
+	/**
+	 * Write tests for credential creation, viewing, editing, and deletion.
+	 */
+
+	//Best test
+	@Test
+	public void CredentialTesting(){
+		WebDriverWait wait = new WebDriverWait(driver,2);
+		signup_Login("ds","ds","ds","ds");
+		credentialCreation(wait,"www.localhost.com","Tanha","t4nha");
+	}
+
+	//Credential Creation
+	private void credentialCreation(WebDriverWait wait, String url, String userName, String passWord){
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		WebElement nav_credentials_tab = driver.findElement(By.id("nav-credentials-tab"));
+		nav_credentials_tab.click();
+
+		//create_new_credential button has been clicked
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("create_new_credential")));
+		WebElement create_new_credential = driver.findElement(By.id("create_new_credential"));
+		create_new_credential.click();
+
+		//Let's put some value in it.
+
+		//URL
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		WebElement url_credential = driver.findElement(By.id("credential-url"));
+		url_credential.click();
+		url_credential.sendKeys(url);
+
+		//Username
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+		WebElement username_credential = driver.findElement(By.id("credential-username"));
+		username_credential.click();
+		username_credential.sendKeys(userName);
+
+		//Password
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement password_credential = driver.findElement(By.id("credential-password"));
+		password_credential.click();
+		password_credential.sendKeys(passWord);
+		//Save Changes
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("save_changes_credential")));
+		WebElement save_changes_credential = driver.findElement(By.id("save_changes_credential"));
+		save_changes_credential.click();
+		//Verifies that they are displayed
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		WebElement nav_credentials_tab2 = driver.findElement(By.id("nav-credentials-tab"));
+		nav_credentials_tab2.click();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("url_credential")));
+		WebElement user_url = driver.findElement(By.id("url_credential"));
+		String getting_Url = user_url.getText();
+		Assertions.assertNotNull(getting_Url);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username_credential")));
+		WebElement user_name = driver.findElement(By.id("username_credential"));
+		String getting_name = user_name.getText();
+		Assertions.assertNotNull(getting_name);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password_credential")));
+		WebElement user_password = driver.findElement(By.id("password_credential"));
+		String getting_password = user_password.getText();
+		Assertions.assertNotNull(getting_password);
+
+		//Verifies that the displayed password is encrypted
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password_credential")));
+//		WebElement encryptedPassword = driver.findElement(By.id("password_credential"));
+//		String gettingEncryptedPassword = user_password.getText();
+//
+//		//Need database value
+//		EncryptionService encryptionService = new EncryptionService();
+//		String decryptedPassword = encryptionService.decryptValue("2","1");
+//
+		//t4nha
+		//String gettingDecodedSalt =
+
+	}
+	//Credential Viewing
+	private void credentialViewing(WebDriverWait wait){
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		WebElement nav_credentials_tab = driver.findElement(By.id("nav-credentials-tab"));
+		nav_credentials_tab.click();
+	}
+	//Credential Editing
+	private void credentialEditing(){
+
+	}
+	//Credential Deleting
+	private void credentialDeleting(){
+
+	}
 
 	@Test
 	public void getLoginPage() {

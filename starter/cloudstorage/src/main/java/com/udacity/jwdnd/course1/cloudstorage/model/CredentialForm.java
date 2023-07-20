@@ -1,6 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.model;
 
-
 public class CredentialForm {
     private Integer id;
     private Integer userid;

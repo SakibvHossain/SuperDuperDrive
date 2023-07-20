@@ -76,6 +76,8 @@ public class HomeController {
                 return "home";
             }
         }
+
+
         if(credentialForm.getUrl() != null && credentialForm.getUsername() != null && credentialForm.getPassword() != null){
             if(credentialForm.getId() == null){
                 UserModel targetuser = this.userService.getUser(authentication.getName());
@@ -102,6 +104,8 @@ public class HomeController {
                 return "home";
             }
         }
+
+
         if(fileForm.getFileUpload() != null){
         try {
             String filename = fileForm.getFileUpload().getOriginalFilename();
@@ -109,18 +113,12 @@ public class HomeController {
             byte[] fileBytes = fileForm.getFileUpload().getBytes();
             String fileSize = String.valueOf(fileForm.getFileUpload().getSize());
             int userId = this.userService.getUser(authentication.getName()).getId();
-            System.out.println("======= FILE INFO =======");
-            System.out.println("FILENAME: " + filename);
-            System.out.println("CONTENT-TYPE: " + contentType);
-            System.out.println("FILE BYTES: " + fileBytes.length);
-            System.out.println("FILE SIZE: " + fileSize);
-            System.out.println("USER ID: " + userId);
             Files file = new Files(null, filename, contentType, fileSize, userId, fileBytes);
             this.fileService.addFile(file);
             System.out.println(Arrays.toString(fileBytes));
             model.addAttribute("fileList", this.fileService.getFiles());
-//            model.addAttribute("noteList", this.noteService.getNotes());
-//            model.addAttribute("credentialList", this.credentialService.getCredentials());
+            model.addAttribute("noteList", this.noteService.getNotes());
+            model.addAttribute("credentialList", this.credentialService.getCredentials());
         } catch(IOException ioException){
             System.out.println(ioException.getMessage());
         }
@@ -163,6 +161,18 @@ public class HomeController {
     }
 
     //Deleting Credentials
+    //th:href="@{/home/credential/view/{passId}(passId=${cred.password})}"
+
+//    @GetMapping("/credential/view/{credId}")
+//    public String viewDecryptedPassword(@PathVariable("credId") Integer credentialid, Model model){
+//        System.out.println("Encrypted Password Viewed As: "+ credentialid);
+//        //this.credentialService.gettingTheCredential(credentialid);
+//        model.addAttribute("fileList", this.fileService.getFiles());
+//        model.addAttribute("noteList", this.noteService.getNotes());
+//        model.addAttribute("credentialList", this.credentialService.getCredentials());
+//        return "home/credential/view";
+//    }
+    //th:href="@{/home/credential/delete/{credId}(credId=${cred.credentialid})}">Delete</a>
     @GetMapping("/credential/delete/{credId}")
     public String creddeleted(@PathVariable("credId") Integer credId, Model model){
         System.out.println("Credential " + credId + " is deleted");
@@ -171,6 +181,12 @@ public class HomeController {
         model.addAttribute("noteList", this.noteService.getNotes());
         model.addAttribute("credentialList", this.credentialService.getCredentials());
         return "home";
+    }
+
+
+    @GetMapping("/home/credentialEdit")
+    public String viewEdit(){
+        return "credentialEdit";
     }
 
 
@@ -208,6 +224,4 @@ public class HomeController {
     public List<Credentials> CredList(){
         return this.credentialService.getCredentials();
     }
-
-
 }

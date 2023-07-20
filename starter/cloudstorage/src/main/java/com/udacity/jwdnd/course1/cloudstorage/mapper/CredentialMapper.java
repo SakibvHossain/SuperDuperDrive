@@ -23,4 +23,8 @@ public interface CredentialMapper {
 
     @Select("SELECT FROM CREDENTIALS WHERE credentialid = #{credentialid}")
     Credentials findCredential(Integer credentialid);
+
+    @Select("SELECT password FROM CREDENTIALS WHERE credentialid = #{credentialid}")
+    String getPasswordById(@Param("credentialid") Integer id);
+
 }
