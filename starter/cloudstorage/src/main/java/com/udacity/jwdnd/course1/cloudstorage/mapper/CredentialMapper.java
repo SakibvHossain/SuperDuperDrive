@@ -1,30 +1,22 @@
 package com.udacity.jwdnd.course1.cloudstorage.mapper;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.Credentials;
-import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
 public interface CredentialMapper {
-    @Select("SELECT * FROM CREDENTIALS")
-    List<Credentials> getCredentials();
+    @Select("SELECT * FROM CREDENTIALS WHERE userId = #{userId}")
+    List<Credential> getCredentials(Integer userId);
 
-    @Insert("INSERT INTO CREDENTIALS (url, username, key, password, userid) VALUES(#{url}, #{username}, #{key}, #{password}, #{userid})")
-    @Options(useGeneratedKeys = true, keyProperty = "credentialid")
-    int insert(Credentials credential);
+    @Insert("INSERT INTO CREDENTIALS (url, username,key,password, userId) VALUES(#{url},#{username},#{key}, #{password}, #{userId})")
+    @Options(useGeneratedKeys = true, keyProperty = "credentialId")
+    int insert(Credential credential);
 
-    @Update("UPDATE CREDENTIALS set url = #{url}, username = #{username}, key = #{key}, password = #{password}, userid = #{userid} WHERE credentialid = #{credentialid}")
-    void update(Credentials credential);
+    @Update("UPDATE CREDENTIALS SET url=#{url}, username =#{username}, key =#{key}, password=#{password} WHERE credentialId =#{credentialId}")
+    int updateCredential(Credential credential);
 
-    @Delete("DELETE FROM CREDENTIALS WHERE credentialid = #{credentialid}")
-    void delete(Integer credentialid);
-
-    @Select("SELECT FROM CREDENTIALS WHERE credentialid = #{credentialid}")
-    Credentials findCredential(Integer credentialid);
-
-    @Select("SELECT password FROM CREDENTIALS WHERE credentialid = #{credentialid}")
-    String getPasswordById(@Param("credentialid") Integer id);
-
+    @Delete("DELETE FROM CREDENTIALS WHERE credentialId =#{credentialId}")
+    int deleteCredential(int credentialId);
 }

@@ -1,10 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.*;
-import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
-import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
-import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,22 +21,27 @@ public class HomeController {
     private UserService userService;
     private FileService fileService;
     private NoteService noteService;
-    private CredentialService credentialService;
+    private final CredentialService credentialService;
+    private final EncryptionService encryptionService;
 
-    public HomeController(UserService userService, FileService fileService, NoteService noteService, CredentialService credentialService) {
+    public HomeController(UserService userService, FileService fileService, NoteService noteService, CredentialService credentialService, EncryptionService encryptionService) {
         this.userService = userService;
         this.fileService = fileService;
         this.noteService = noteService;
         this.credentialService = credentialService;
+        this.encryptionService = encryptionService;
     }
 
     @GetMapping
-    public String viewHome(){
+    public String viewHome(Model model, Authentication authentication){
+        UserModel user = userService.getUser(authentication.getName());
+        model.addAttribute("encryptionService",encryptionService);
+        model.addAttribute("credentials", credentialService.getCredentials(user.getId()));
         return "home";
     }
 
     @PostMapping
-    public String sendingData(Authentication authentication, FileForm fileForm, NoteForm noteForm, CredentialForm credentialForm, Model model){
+    public String sendingData(Authentication authentication, FileForm fileForm, NoteForm noteForm, Model model){
         if(noteForm.getDescription() != null || noteForm.getTitle() != null){
             if(noteForm.getId() == null){
                 UserModel targetuser = this.userService.getUser(authentication.getName());
@@ -56,7 +58,6 @@ public class HomeController {
                 noteForm.setDescription("");
                 model.addAttribute("noteList", this.noteService.getNotes());
                 model.addAttribute("fileList", this.fileService.getFiles());
-                model.addAttribute("credentialList", this.credentialService.getCredentials());
                 System.out.println("Bitter");
                 return "home";
             }
@@ -72,39 +73,9 @@ public class HomeController {
                 noteForm.setDescription("");
                 model.addAttribute("noteList", this.noteService.getNotes());
                 model.addAttribute("fileList", this.fileService.getFiles());
-                model.addAttribute("credentialList", this.credentialService.getCredentials());
                 return "home";
             }
         }
-
-
-        if(credentialForm.getUrl() != null && credentialForm.getUsername() != null && credentialForm.getPassword() != null){
-            if(credentialForm.getId() == null){
-                UserModel targetuser = this.userService.getUser(authentication.getName());
-                credentialForm.setUserId(targetuser.getId());
-                this.credentialService.addCredential(credentialForm);
-                credentialForm.setPassword("");
-                credentialForm.setUsername("");
-                credentialForm.setUrl("");
-                model.addAttribute("credentialList", this.credentialService.getCredentials());
-                model.addAttribute("fileList", this.fileService.getFiles());
-                model.addAttribute("noteList", this.noteService.getNotes());
-                return "home";
-            }
-            else{
-                UserModel targetuser = this.userService.getUser(authentication.getName());
-                credentialForm.setUserId(targetuser.getId());
-                this.credentialService.updateCredential(credentialForm);
-                credentialForm.setPassword("");
-                credentialForm.setUsername("");
-                credentialForm.setUrl("");
-                model.addAttribute("credentialList", this.credentialService.getCredentials());
-                model.addAttribute("fileList", this.fileService.getFiles());
-                model.addAttribute("noteList", this.noteService.getNotes());
-                return "home";
-            }
-        }
-
 
         if(fileForm.getFileUpload() != null){
         try {
@@ -118,7 +89,6 @@ public class HomeController {
             System.out.println(Arrays.toString(fileBytes));
             model.addAttribute("fileList", this.fileService.getFiles());
             model.addAttribute("noteList", this.noteService.getNotes());
-            model.addAttribute("credentialList", this.credentialService.getCredentials());
         } catch(IOException ioException){
             System.out.println(ioException.getMessage());
         }
@@ -179,15 +149,10 @@ public class HomeController {
         this.credentialService.deleteCredential(credId);
         model.addAttribute("fileList", this.fileService.getFiles());
         model.addAttribute("noteList", this.noteService.getNotes());
-        model.addAttribute("credentialList", this.credentialService.getCredentials());
         return "home";
     }
 
 
-    @GetMapping("/home/credentialEdit")
-    public String viewEdit(){
-        return "credentialEdit";
-    }
 
 
     //Defining the Models
@@ -216,12 +181,5 @@ public class HomeController {
     }
 
     //Credential Form and List
-    @ModelAttribute("credentialForm")
-    public CredentialForm getCredentialForm(){
-        return new CredentialForm();
-    }
-    @ModelAttribute("credentialList")
-    public List<Credentials> CredList(){
-        return this.credentialService.getCredentials();
-    }
+
 }
