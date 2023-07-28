@@ -33,10 +33,10 @@ public class HomeController {
     }
 
     @GetMapping
-    public String viewHome(Model model, Authentication authentication){
-        UserModel user = userService.getUser(authentication.getName());
+    public String getHomePage(Model model, Authentication authentication){
+        User user = userService.getUser(authentication.getName());
         model.addAttribute("encryptionService",encryptionService);
-        model.addAttribute("credentials", credentialService.getCredentials(user.getId()));
+        model.addAttribute("credentials", credentialService.getCredentials(user.getUserId()));
         return "home";
     }
 
@@ -44,8 +44,8 @@ public class HomeController {
     public String sendingData(Authentication authentication, FileForm fileForm, NoteForm noteForm, Model model){
         if(noteForm.getDescription() != null || noteForm.getTitle() != null){
             if(noteForm.getId() == null){
-                UserModel targetuser = this.userService.getUser(authentication.getName());
-                noteForm.setUId(targetuser.getId());
+                User targetuser = this.userService.getUser(authentication.getName());
+                noteForm.setUId(targetuser.getUserId());
                 int queryResult = this.noteService.addNote(noteForm);
                 if(queryResult == 1){
                     model.addAttribute("successOperation",true);
@@ -66,8 +66,8 @@ public class HomeController {
                 System.out.println("NOTE ID: " + noteForm.getId());
                 System.out.println("NOTE TITLE: " + noteForm.getTitle());
                 System.out.println("NOTE DESCRIPTION: " + noteForm.getDescription());
-                UserModel targetuser = this.userService.getUser(authentication.getName());
-                noteForm.setUId(targetuser.getId());
+                User targetuser = this.userService.getUser(authentication.getName());
+                noteForm.setUId(targetuser.getUserId());
                 this.noteService.updateNote(noteForm);
                 noteForm.setTitle("");
                 noteForm.setDescription("");
@@ -83,7 +83,7 @@ public class HomeController {
             String contentType = fileForm.getFileUpload().getContentType();
             byte[] fileBytes = fileForm.getFileUpload().getBytes();
             String fileSize = String.valueOf(fileForm.getFileUpload().getSize());
-            int userId = this.userService.getUser(authentication.getName()).getId();
+            int userId = this.userService.getUser(authentication.getName()).getUserId();
             Files file = new Files(null, filename, contentType, fileSize, userId, fileBytes);
             this.fileService.addFile(file);
             System.out.println(Arrays.toString(fileBytes));
@@ -143,14 +143,14 @@ public class HomeController {
 //        return "home/credential/view";
 //    }
     //th:href="@{/home/credential/delete/{credId}(credId=${cred.credentialid})}">Delete</a>
-    @GetMapping("/credential/delete/{credId}")
-    public String creddeleted(@PathVariable("credId") Integer credId, Model model){
-        System.out.println("Credential " + credId + " is deleted");
-        this.credentialService.deleteCredential(credId);
-        model.addAttribute("fileList", this.fileService.getFiles());
-        model.addAttribute("noteList", this.noteService.getNotes());
-        return "home";
-    }
+//    @GetMapping("/credential/delete/{credId}")
+//    public String creddeleted(@PathVariable("credId") Integer credId, Model model){
+//        System.out.println("Credential " + credId + " is deleted");
+//        this.credentialService.deleteCredential(credId);
+//        model.addAttribute("fileList", this.fileService.getFiles());
+//        model.addAttribute("noteList", this.noteService.getNotes());
+//        return "home";
+//    }
 
 
 

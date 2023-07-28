@@ -1,7 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
-import com.udacity.jwdnd.course1.cloudstorage.model.UserModel;
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,7 +30,7 @@ public class AuthenticationService implements AuthenticationProvider {
 
         //This line is used for mapping to the database on username and watching is there any user exist or not
         //by assigning on User Model. If there is no user it will be null else the given user will be assigned on the same reference.
-        UserModel user = mapper.getUser(username);
+        User user = mapper.getUser(username);
 
         //Time to check the given user exist or not
         if(user!=null){ //By default, it is false if it is not null it will be true

@@ -1,7 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.UserModel;
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,43 +20,43 @@ public class SignupController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public String viewSignupPage(){
+    @GetMapping()
+    public String signupView() {
         return "signup";
     }
 
-    @PostMapping
-    public String signupOperations(Model model, @ModelAttribute UserModel userModel){
-
-//        System.out.println("ID: "+userModel.getId());
-//        System.out.println("Firstname: "+userModel.getFirstname());
-//        System.out.println("Lastname: "+userModel.getLastname());
-//        System.out.println("Username: "+userModel.getUsername());
-//        System.out.println("Password: "+userModel.getPassword());
-
+    @PostMapping()
+    public String signupUser(@ModelAttribute User user, Model model, Authentication authentication) {
         String signupError = null;
+        String signupSuccess = null;
 
-        System.out.println(userService.isUserAvailable(userModel.getUsername()));
-
-        if(!userService.isUserAvailable(userModel.getUsername())){
-            System.out.println(userModel.getUsername());
-//            System.out.println(userServices.whatIsThis("a"));
-            signupError = "User Already Exits";
-            model.addAttribute("signupError", true);
-            model.addAttribute("message",signupError);
+        if (!userService.isUsernameAvailable(user.getUsername())) {
+            signupError = "The username already exists.";
         }
 
-        if(signupError == null){
-            int isRowsAdded_to_1 = userService.createUser(userModel);
-            if(isRowsAdded_to_1 < 0){
-                signupError = "There is a problem";
-                model.addAttribute("signupError", true);
-                model.addAttribute("message",signupError);
-            }else{
-                model.addAttribute("signupSuccess",true);
-//                return "redirect:/login";
+        if (signupError == null) {
+            int rowsAdded = userService.createUser(user);
+            User user2 = userService.getUser(user.getUsername());
+            System.out.println("Registered userID"+user2.getUserId());
+            System.out.println("Registered userID"+user2.getUsername());
+            System.out.println("Registered userID"+user2.getPassword());
+            System.out.println("Registered userID"+user2.getSalt());
+//            System.out.println(""+);
+//            System.out.println(""+);
+//            System.out.println(""+);
+//            System.out.println(""+);
+
+            if (rowsAdded < 0) {
+                signupError = "There was an error signing you up. Please try again.";
             }
         }
+
+        if (signupError == null) {
+            model.addAttribute("signupSuccess", true);
+        } else {
+            model.addAttribute("signupError", signupError);
+        }
+
         return "signup";
     }
 }

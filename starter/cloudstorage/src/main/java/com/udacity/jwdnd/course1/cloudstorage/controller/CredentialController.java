@@ -1,7 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
-import com.udacity.jwdnd.course1.cloudstorage.model.UserModel;
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -30,10 +30,11 @@ public class CredentialController {
 
     @PostMapping
     public String createCredential(@ModelAttribute Credential credential, Authentication authentication, Model model){
+        System.out.println("i m in create cred");
         this.credentialError = null;
         this.credentialSuccess = null;
-        UserModel user = userService.getUser(authentication.getName());
-        Integer userId = user.getId();
+        User user = userService.getUser(authentication.getName());
+        Integer userId = user.getUserId();
         credential.setUserId(userId);
         SecureRandom random = new SecureRandom();
         byte[] key = new byte[16];
@@ -42,6 +43,7 @@ public class CredentialController {
         credential.setKey(encodedKey);
         String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
         credential.setPassword(encryptedPassword);
+//        String decryptedPassword = encryptionService.decryptValue(encryptedPassword, encodedKey);
         int rowsAdded = credentialService.createCredential(credential);
         if (rowsAdded < 0){
             this.credentialError = "There was an error for adding a credential. Please try again";
@@ -60,10 +62,15 @@ public class CredentialController {
         System.out.println("i m in update note");
         this.credentialError = null;
         this.credentialSuccess = null;
-        UserModel user = userService.getUser(authentication.getName());
-        Integer userId = user.getId();
+        User user = userService.getUser(authentication.getName());
+        Integer userId = user.getUserId();
         credential.setUserId(userId);
+//        System.out.println(credential.getDecryptedPassword());
         System.out.println(model.getAttribute("credential-password"));
+//        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), credential.getKey());
+//        credential.setPassword(encryptedPassword);
+
+
         credential.setPassword(encryptionService.encryptValue(credential.getPassword(), credential.getKey()));
 
         int rowsUpdated = credentialService.updateCredential(credential);
@@ -84,8 +91,8 @@ public class CredentialController {
         System.out.println("i m in delete note");
         this.credentialError = null;
         this.credentialSuccess = null;
-        UserModel user = userService.getUser(authentication.getName());
-        Integer userId = user.getId();
+        User user = userService.getUser(authentication.getName());
+        Integer userId = user.getUserId();
         credential.setUserId(userId);
         int rowsUpdated = credentialService.deleteCredential(credential.getCredentialId());
         if (rowsUpdated < 0){
