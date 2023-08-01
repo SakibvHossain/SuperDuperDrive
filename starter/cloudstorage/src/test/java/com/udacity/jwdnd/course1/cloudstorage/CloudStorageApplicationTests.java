@@ -1,5 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.controller.HomeController;
+import com.udacity.jwdnd.course1.cloudstorage.mapper.CredentialMapper;
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -9,13 +13,22 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import java.io.File;
+import java.util.List;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
+	@Autowired
+	private CredentialService credentialService;
+
+	//After that on HomePage two methods have to be created:
+	//1. checkForCredentialEncryptedPassword
+	//2. getCredentialTableRowAlternative
 
 	@LocalServerPort
 	private int port;
@@ -261,32 +274,24 @@ class CloudStorageApplicationTests {
 		WebElement nav_credentials_tab2 = driver.findElement(By.id("nav-credentials-tab"));
 		nav_credentials_tab2.click();
 
-//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("url_credential")));
-//		WebElement user_url = driver.findElement(By.id("url_credential"));
-//		String getting_Url = user_url.getText();
-//		Assertions.assertNotNull(getting_Url);
-//
-//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username_credential")));
-//		WebElement user_name = driver.findElement(By.id("username_credential"));
-//		String getting_name = user_name.getText();
-//		Assertions.assertNotNull(getting_name);
-//
-//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password_credential")));
-//		WebElement user_password = driver.findElement(By.id("password_credential"));
-//		String getting_password = user_password.getText();
-//		Assertions.assertNotNull(getting_password);
+		//Checking the given url is displayed
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("url_credential")));
+		WebElement user_url = driver.findElement(By.id("url_credential"));
+		String getting_Url = user_url.getText();
+		Assertions.assertEquals("www.localhost.com",getting_Url);
+		//Checking the given username is displayed
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username_credential")));
+		WebElement user_name = driver.findElement(By.id("username_credential"));
+		String getting_name = user_name.getText();
+		Assertions.assertEquals("Tanha",getting_name);
+		//Checking the given password is displayed
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password_credential")));
+		WebElement user_password = driver.findElement(By.id("password_credential"));
+		String getting_password = user_password.getText();
+
+		Assertions.assertEquals("s2fxPhSNWXA30blpe279CQ==",getting_password);
 
 		//Verifies that the displayed password is encrypted
-//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password_credential")));
-//		WebElement encryptedPassword = driver.findElement(By.id("password_credential"));
-//		String gettingEncryptedPassword = user_password.getText();
-//
-//		//Need database value
-//		EncryptionService encryptionService = new EncryptionService();
-//		String decryptedPassword = encryptionService.decryptValue("2","1");
-//
-		//t4nha
-		//String gettingDecodedSalt =
 
 	}
 	//Credential Viewing

@@ -130,29 +130,6 @@ public class HomeController {
         return "home";
     }
 
-    //Deleting Credentials
-    //th:href="@{/home/credential/view/{passId}(passId=${cred.password})}"
-
-//    @GetMapping("/credential/view/{credId}")
-//    public String viewDecryptedPassword(@PathVariable("credId") Integer credentialid, Model model){
-//        System.out.println("Encrypted Password Viewed As: "+ credentialid);
-//        //this.credentialService.gettingTheCredential(credentialid);
-//        model.addAttribute("fileList", this.fileService.getFiles());
-//        model.addAttribute("noteList", this.noteService.getNotes());
-//        model.addAttribute("credentialList", this.credentialService.getCredentials());
-//        return "home/credential/view";
-//    }
-    //th:href="@{/home/credential/delete/{credId}(credId=${cred.credentialid})}">Delete</a>
-//    @GetMapping("/credential/delete/{credId}")
-//    public String creddeleted(@PathVariable("credId") Integer credId, Model model){
-//        System.out.println("Credential " + credId + " is deleted");
-//        this.credentialService.deleteCredential(credId);
-//        model.addAttribute("fileList", this.fileService.getFiles());
-//        model.addAttribute("noteList", this.noteService.getNotes());
-//        return "home";
-//    }
-
-
 
 
     //Defining the Models

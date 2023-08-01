@@ -161,7 +161,7 @@
                                 <tbody th:each="credential:${credentials}">
                                 <tr>
                                     <td>
-                                        <button type="button" class="btn btn-success"
+                                        <button id="credential_edit_button" type="button" class="btn btn-success"
                                                 th:credential-url="${credential.getUrl()}"
                                                 th:credential-key="${credential.getKey()}"
                                                 th:credential-username="${credential.getUsername()}"
@@ -173,14 +173,14 @@
                                                     this.getAttribute('credential-password'),
                                                     this.getAttribute('credential-key'))"
                                         >Edit</button>
-                                        <a class="btn btn-danger"
+                                        <a id="want_to_delete" class="btn btn-danger"
                                            th:credential-id="${credential.getCredentialId()}"
                                            onclick="showDeleteCredentialModal(this.getAttribute('credential-id'))"
                                         >Delete</a>
                                     </td>
-                                    <th th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
-                                    <td th:text="${credential.getUsername()}">Example Credential Username</td>
-                                    <td th:text="${credential.getPassword()}">Example Credential Password</td>
+                                    <th id="url_credential" th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
+                                    <td id="username_credential" th:text="${credential.getUsername()}">Example Credential Username</td>
+                                    <td id="password_credential" th:text="${credential.getPassword()}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
