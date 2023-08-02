@@ -23,9 +23,6 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
-	@Autowired
-	private CredentialService credentialService;
-
 	//After that on HomePage two methods have to be created:
 	//1. checkForCredentialEncryptedPassword
 	//2. getCredentialTableRowAlternative
@@ -35,6 +32,7 @@ class CloudStorageApplicationTests {
 
 
 	private WebDriver driver;
+	private CredentialPage credentialPage;
 
 
 	@BeforeAll
@@ -45,6 +43,7 @@ class CloudStorageApplicationTests {
 	@BeforeEach
 	public void beforeEach() {
 		this.driver = new ChromeDriver();
+		credentialPage = new CredentialPage(driver);
 	}
 
 	@AfterEach
@@ -230,69 +229,14 @@ class CloudStorageApplicationTests {
 	//Best test
 	@Test
 	public void CredentialTesting(){
-		WebDriverWait wait = new WebDriverWait(driver,2);
 		signup_Login("ds","ds","ds","ds");
-		credentialCreation(wait,"www.localhost.com","Tanha","t4nha");
+		credentialCreation();
 	}
 
 	//Credential Creation
-	private void credentialCreation(WebDriverWait wait, String url, String userName, String passWord){
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
-		WebElement nav_credentials_tab = driver.findElement(By.id("nav-credentials-tab"));
-		nav_credentials_tab.click();
-
-		//create_new_credential button has been clicked
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("create_new_credential")));
-		WebElement create_new_credential = driver.findElement(By.id("create_new_credential"));
-		create_new_credential.click();
-
-		//Let's put some value in it.
-
-		//URL
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
-		WebElement url_credential = driver.findElement(By.id("credential-url"));
-		url_credential.click();
-		url_credential.sendKeys(url);
-
-		//Username
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
-		WebElement username_credential = driver.findElement(By.id("credential-username"));
-		username_credential.click();
-		username_credential.sendKeys(userName);
-
-		//Password
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
-		WebElement password_credential = driver.findElement(By.id("credential-password"));
-		password_credential.click();
-		password_credential.sendKeys(passWord);
-		//Save Changes
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("save_changes_credential")));
-		WebElement save_changes_credential = driver.findElement(By.id("save_changes_credential"));
-		save_changes_credential.click();
-		//Verifies that they are displayed
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
-		WebElement nav_credentials_tab2 = driver.findElement(By.id("nav-credentials-tab"));
-		nav_credentials_tab2.click();
-
-		//Checking the given url is displayed
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("url_credential")));
-		WebElement user_url = driver.findElement(By.id("url_credential"));
-		String getting_Url = user_url.getText();
-		Assertions.assertEquals("www.localhost.com",getting_Url);
-		//Checking the given username is displayed
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username_credential")));
-		WebElement user_name = driver.findElement(By.id("username_credential"));
-		String getting_name = user_name.getText();
-		Assertions.assertEquals("Tanha",getting_name);
-		//Checking the given password is displayed
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password_credential")));
-		WebElement user_password = driver.findElement(By.id("password_credential"));
-		String getting_password = user_password.getText();
-
-		Assertions.assertEquals("s2fxPhSNWXA30blpe279CQ==",getting_password);
-
-		//Verifies that the displayed password is encrypted
-
+	private void credentialCreation(){
+		credentialPage.creatingCredential();
+		credentialPage.verifying_Credentials_Displayed();
 	}
 	//Credential Viewing
 	private void credentialViewing(WebDriverWait wait){
