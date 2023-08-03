@@ -65,6 +65,9 @@ public class CredentialController {
         User user = userService.getUser(authentication.getName());
         Integer userId = user.getUserId();
         credential.setUserId(userId);
+
+
+
 //        System.out.println(credential.getDecryptedPassword());
         System.out.println(model.getAttribute("credential-password"));
 //        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), credential.getKey());
@@ -86,7 +89,7 @@ public class CredentialController {
         return "redirect:/home";
     }
 
-    @DeleteMapping
+    @PostMapping("/delete")
     public String deleteCredential(@ModelAttribute Credential credential, Authentication authentication, Model model){
         System.out.println("i m in delete note");
         this.credentialError = null;
