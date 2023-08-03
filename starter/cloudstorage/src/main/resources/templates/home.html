@@ -137,6 +137,7 @@
 
                     <!-- Start of Credential Section-->
                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
+
                         <div id="success-msg2" th:if="${credentialSuccess}" class="alert alert-dark" >
                             <span th:text="${noteSuccess}"></span>
                         </div>
@@ -144,7 +145,7 @@
                             <span th:text="${noteError}"></span>
                         </div>
 
-                        <button id="create_new_credential" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
 
@@ -161,7 +162,7 @@
                                 <tbody th:each="credential:${credentials}">
                                 <tr>
                                     <td>
-                                        <button id="credential_edit_button" type="button" class="btn btn-success"
+                                        <button type="button" class="btn btn-success"
                                                 th:credential-url="${credential.getUrl()}"
                                                 th:credential-key="${credential.getKey()}"
                                                 th:credential-username="${credential.getUsername()}"
@@ -173,21 +174,21 @@
                                                     this.getAttribute('credential-password'),
                                                     this.getAttribute('credential-key'))"
                                         >Edit</button>
-                                        <a id="want_to_delete" class="btn btn-danger"
+                                        <a class="btn btn-danger"
                                            th:credential-id="${credential.getCredentialId()}"
                                            onclick="showDeleteCredentialModal(this.getAttribute('credential-id'))"
                                         >Delete</a>
                                     </td>
-                                    <th id="url_credential" th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
-                                    <td id="username_credential" th:text="${credential.getUsername()}">Example Credential Username</td>
-                                    <td id="password_credential" th:text="${credential.getPassword()}">Example Credential Password</td>
+                                    <th th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
+                                    <td th:text="${credential.getUsername()}">Example Credential Username</td>
+                                    <td th:text="${credential.getPassword()}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div th:insert="fragments/create-credential :: create"></div>
-                        <div th:insert="fragments/edit-credential :: edit"></div>
-                        <div th:insert="fragments/delete-credential :: delete"></div>
+                        <div th:insert="fragments/create-credential :: create-credential"></div>
+                        <div th:insert="fragments/edit-credential :: edit-credential"></div>
+                        <div th:insert="fragments/delete-credential :: delete-credential"></div>
                     </div>
                     <!-- End of Credential Section create-credential-->
                 </div>
