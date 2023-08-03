@@ -57,7 +57,7 @@ public class CredentialController {
         return "redirect:/home";
     }
 
-    @PutMapping
+    @PostMapping("/edit")
     public String updateCredential(@ModelAttribute Credential credential, Authentication authentication, Model model){
         System.out.println("i m in update note");
         this.credentialError = null;

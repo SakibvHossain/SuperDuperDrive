@@ -47,4 +47,3 @@ public class Credential {
         this.password= password;
     }
 }
-
