@@ -48,6 +48,8 @@ public class CredentialPage {
     private WebElement edit_username;
     @FindBy(id = "edit-credential-password")
     private WebElement edit_password;
+    @FindBy(id = "edit_button_save_changes")
+    private WebElement edit_button_save_credentials;
     ///////////////////////////////////////Deleting Field
     @FindBy(id = "want_to_delete")
     private WebElement view_Delete;
@@ -125,7 +127,37 @@ public class CredentialPage {
         Assertions.assertEquals(username,edit_username.getAttribute("value"));
         wait.until(ExpectedConditions.visibilityOf(edit_password));
         Assertions.assertEquals(password,edit_password.getAttribute("value"));
-       // edit_credentials_Verify_They_are_displayed();
+        edit_credentials_Verify_They_are_displayed();
+    }
+
+    public void edit_credentials_Verify_They_are_displayed(){
+        //Credentials are edited
+        wait.until(ExpectedConditions.visibilityOf(edit_Url));
+        edit_Url.clear();
+        edit_Url.click();
+        edit_Url.sendKeys(url2);
+        wait.until(ExpectedConditions.visibilityOf(edit_username));
+        edit_username.clear();
+        edit_username.click();
+        edit_username.sendKeys(username2);
+        wait.until(ExpectedConditions.visibilityOf(edit_password));
+        edit_password.clear();
+        edit_password.click();
+        edit_password.sendKeys(password2);
+        wait.until(ExpectedConditions.visibilityOf(edit_button_save_credentials));
+        edit_button_save_credentials.click();
+        //Click on credential tab
+        wait.until(ExpectedConditions.visibilityOf(credential_tab));
+        credential_tab.click();
+        //Checking that are displayed
+        wait.until(ExpectedConditions.visibilityOf(saved_url));
+        Assertions.assertEquals(url2,saved_url.getText());
+        wait.until(ExpectedConditions.visibilityOf(saved_username));
+        Assertions.assertEquals(username2,saved_username.getText());
+        wait.until(ExpectedConditions.visibilityOf(saved_password));
+        //There is no id except 1 because 1 credential will be created that's for
+        Credential credential = credentialService.getCredentialById(1);
+        Assertions.assertEquals(encryptionService.encryptValue(password2,credential.getKey()),saved_password.getText());
     }
 
 }
