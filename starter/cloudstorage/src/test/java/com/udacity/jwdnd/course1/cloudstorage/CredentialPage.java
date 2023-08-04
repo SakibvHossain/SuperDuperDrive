@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.CredentialMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import org.junit.jupiter.api.Assertions;
@@ -59,15 +60,15 @@ public class CredentialPage {
     private static String password = "T4nha";
 
     WebDriverWait wait;
-    @Autowired
     private CredentialService credentialService;
 
     private EncryptionService encryptionService;
 
-    public CredentialPage(WebDriver driver){
+    public CredentialPage(WebDriver driver, CredentialService credentialService){
         PageFactory.initElements(driver,this);
         wait = new WebDriverWait(driver,2);
         encryptionService = new EncryptionService();
+        this.credentialService = credentialService;
     }
 
 
@@ -106,7 +107,8 @@ public class CredentialPage {
         Assertions.assertEquals(username,saved_username.getText());
         wait.until(ExpectedConditions.visibilityOf(saved_password));
         //There is no id except 1 because 1 credential will be created that's for
-        Credential credential = this.credentialService.getCredentialById(1);
+        Credential credential = credentialService.getCredentialById(1);
         Assertions.assertEquals(encryptionService.encryptValue(password,credential.getKey()),saved_password.getText());
+//      System.out.println(credential.getCredentialId());
     }
 }

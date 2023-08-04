@@ -33,6 +33,8 @@ class CloudStorageApplicationTests {
 
 	private WebDriver driver;
 	private CredentialPage credentialPage;
+	@Autowired
+	private CredentialService credentialService;
 
 
 	@BeforeAll
@@ -43,7 +45,7 @@ class CloudStorageApplicationTests {
 	@BeforeEach
 	public void beforeEach() {
 		this.driver = new ChromeDriver();
-		credentialPage = new CredentialPage(driver);
+		credentialPage = new CredentialPage(driver, credentialService);
 	}
 
 	@AfterEach

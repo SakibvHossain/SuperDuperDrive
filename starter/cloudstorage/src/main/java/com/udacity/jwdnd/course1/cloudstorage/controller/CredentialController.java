@@ -54,6 +54,13 @@ public class CredentialController {
             model.addAttribute("credentialError", this.credentialError);
         }
 
+        Credential credential1 = credentialService.getCredentialById(1);
+        System.out.println("Get the credential ID: "+credential1.getCredentialId());
+        System.out.println("UserID: "+credential.getUserId());
+        System.out.println("Credential ID: "+credential.getCredentialId());
+        System.out.println("Username: "+credential.getUsername());
+        System.out.println("Key: "+credential.getKey());
+        System.out.println("password: "+credential.getPassword());
         return "redirect:/home";
     }
 
@@ -65,8 +72,6 @@ public class CredentialController {
         User user = userService.getUser(authentication.getName());
         Integer userId = user.getUserId();
         credential.setUserId(userId);
-
-
 
 //        System.out.println(credential.getDecryptedPassword());
         System.out.println(model.getAttribute("credential-password"));
@@ -85,7 +90,6 @@ public class CredentialController {
         } else {
             model.addAttribute("credentialError", this.credentialError);
         }
-
         return "redirect:/home";
     }
 

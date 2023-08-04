@@ -141,7 +141,7 @@
                             <span th:text="${noteError}"></span>
                         </div>
 
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                        <button style="margin: 0.25em;" id="create_new_credential" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
 
@@ -175,9 +175,9 @@
                                            onclick="showDeleteCredentialModal(this.getAttribute('credential-id'))"
                                         >Delete</a>
                                     </td>
-                                    <th th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
-                                    <td th:text="${credential.getUsername()}">Example Credential Username</td>
-                                    <td th:text="${credential.getPassword()}">Example Credential Password</td>
+                                    <th id="url_credential" th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
+                                    <td id="username_credential" th:text="${credential.getUsername()}">Example Credential Username</td>
+                                    <td id="password_credential" th:text="${credential.getPassword()}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
