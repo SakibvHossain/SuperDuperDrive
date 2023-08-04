@@ -51,8 +51,8 @@ public class CredentialPage {
     @FindBy(id = "edit_button_save_changes")
     private WebElement edit_button_save_credentials;
     ///////////////////////////////////////Deleting Field
-    @FindBy(id = "want_to_delete")
-    private WebElement view_Delete;
+    @FindBy(id = "delete_home_button")
+    private WebElement view_delete;
     @FindBy(id = "deleteCredentialSubmit")
     private WebElement delete_credentials;
     @FindBy(id = "credentialTable")
@@ -158,6 +158,17 @@ public class CredentialPage {
         //There is no id except 1 because 1 credential will be created that's for
         Credential credential = credentialService.getCredentialById(1);
         Assertions.assertEquals(encryptionService.encryptValue(password2,credential.getKey()),saved_password.getText());
+    }
+
+    public void delete_Credential(){
+        wait.until(ExpectedConditions.visibilityOf(view_delete));
+        view_delete.click();
+        wait.until(ExpectedConditions.visibilityOf(delete_credentials));
+        delete_credentials.click();
+        Assertions.assertThrows(NullPointerException.class,()->{
+            Credential credential2 = credentialService.getCredentialById(1);
+            System.out.println(credential2.getCredentialId());
+        });
     }
 
 }

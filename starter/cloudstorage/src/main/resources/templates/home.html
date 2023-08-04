@@ -170,7 +170,7 @@
                                                     this.getAttribute('credential-password'),
                                                     this.getAttribute('credential-key'))"
                                         >Edit</button>
-                                        <a class="btn btn-danger"
+                                        <a id="delete_home_button" class="btn btn-danger"
                                            th:credential-id="${credential.getCredentialId()}"
                                            onclick="showDeleteCredentialModal(this.getAttribute('credential-id'))"
                                         >Delete</a>
