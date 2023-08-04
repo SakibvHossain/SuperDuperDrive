@@ -59,6 +59,10 @@ public class CredentialPage {
     private static String url = "localhost:8080/takeLove";
     private static String password = "T4nha";
 
+    private static String username2 = "Tanha2";
+    private static String url2 = "localhost:8080/takeLove2";
+    private static String password2 = "T4nha2";
+
     WebDriverWait wait;
     private CredentialService credentialService;
 
@@ -111,4 +115,17 @@ public class CredentialPage {
         Assertions.assertEquals(encryptionService.encryptValue(password,credential.getKey()),saved_password.getText());
 //      System.out.println(credential.getCredentialId());
     }
+
+    public void Views_existing_set_of_Credentials_and_password_unencrypted(){
+        wait.until(ExpectedConditions.visibilityOf(edit_credentials));
+        edit_credentials.click();
+        wait.until(ExpectedConditions.visibilityOf(edit_Url));
+        Assertions.assertEquals(url,edit_Url.getAttribute("value"));
+        wait.until(ExpectedConditions.visibilityOf(edit_username));
+        Assertions.assertEquals(username,edit_username.getAttribute("value"));
+        wait.until(ExpectedConditions.visibilityOf(edit_password));
+        Assertions.assertEquals(password,edit_password.getAttribute("value"));
+       // edit_credentials_Verify_They_are_displayed();
+    }
+
 }

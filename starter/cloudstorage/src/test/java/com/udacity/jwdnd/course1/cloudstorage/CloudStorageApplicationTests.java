@@ -239,6 +239,7 @@ class CloudStorageApplicationTests {
 	private void credentialCreation(){
 		credentialPage.creatingCredential();
 		credentialPage.verifying_Credentials_Displayed();
+		credentialPage.Views_existing_set_of_Credentials_and_password_unencrypted();
 	}
 	//Credential Viewing
 	private void credentialViewing(WebDriverWait wait){

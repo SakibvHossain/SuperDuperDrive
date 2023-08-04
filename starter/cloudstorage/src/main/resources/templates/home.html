@@ -158,7 +158,7 @@
                                 <tbody th:each="credential:${credentials}">
                                 <tr>
                                     <td>
-                                        <button type="button" class="btn btn-success"
+                                        <button id="credential_edit_button" type="button" class="btn btn-success"
                                                 th:credential-url="${credential.getUrl()}"
                                                 th:credential-key="${credential.getKey()}"
                                                 th:credential-username="${credential.getUsername()}"
