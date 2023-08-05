@@ -63,9 +63,6 @@ public class HomeController {
             }
             else{
                 // Note needs to be updated
-                System.out.println("NOTE ID: " + noteForm.getId());
-                System.out.println("NOTE TITLE: " + noteForm.getTitle());
-                System.out.println("NOTE DESCRIPTION: " + noteForm.getDescription());
                 User targetuser = this.userService.getUser(authentication.getName());
                 noteForm.setUId(targetuser.getUserId());
                 this.noteService.updateNote(noteForm);
@@ -87,6 +84,7 @@ public class HomeController {
             Files file = new Files(null, filename, contentType, fileSize, userId, fileBytes);
             this.fileService.addFile(file);
             System.out.println(Arrays.toString(fileBytes));
+            System.out.println("File size: "+file.getFilesize());
             model.addAttribute("fileList", this.fileService.getFiles());
             model.addAttribute("noteList", this.noteService.getNotes());
         } catch(IOException ioException){
@@ -96,6 +94,11 @@ public class HomeController {
         return "home";
     }
     //Getting the request to view. Actually it downloads and view. For now lets say view.
+
+
+
+
+
     @GetMapping("/file/view/{fileId}")
     public ResponseEntity<byte[]> viewed(@PathVariable("fileId") Integer fileId, Model model){
         System.out.println("File " + fileId + "is viewed");
@@ -109,6 +112,9 @@ public class HomeController {
     //Getting the request to delete. This is just used to delete from file, note, or credential List.
 
     //Deleting Files
+
+
+
     @GetMapping("/file/delete/{fileId}")
     public String deleted(@PathVariable("fileId") Integer fileId, Model model){
         System.out.println("File " + fileId + " is deleted");

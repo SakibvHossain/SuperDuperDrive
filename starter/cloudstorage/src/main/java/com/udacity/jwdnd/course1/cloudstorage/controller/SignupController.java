@@ -37,10 +37,10 @@ public class SignupController {
         if (signupError == null) {
             int rowsAdded = userService.createUser(user);
             User user2 = userService.getUser(user.getUsername());
-            System.out.println("Registered userID"+user2.getUserId());
-            System.out.println("Registered userID"+user2.getUsername());
-            System.out.println("Registered userID"+user2.getPassword());
-            System.out.println("Registered userID"+user2.getSalt());
+            System.out.println("Registered userID: "+user2.getUserId());
+            System.out.println("Username: "+user2.getUsername());
+            System.out.println("Password: "+user2.getPassword());
+            System.out.println("Salt: "+user2.getSalt());
 //            System.out.println(""+);
 //            System.out.println(""+);
 //            System.out.println(""+);
@@ -53,6 +53,7 @@ public class SignupController {
 
         if (signupError == null) {
             model.addAttribute("signupSuccess", true);
+            return "redirect:/login";
         } else {
             model.addAttribute("signupError", signupError);
         }
