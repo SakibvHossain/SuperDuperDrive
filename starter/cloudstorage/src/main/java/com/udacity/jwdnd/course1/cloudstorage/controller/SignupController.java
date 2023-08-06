@@ -52,6 +52,7 @@ public class SignupController {
         }
 
         if (signupError == null) {
+            signupSuccess = "Successful registration";
             model.addAttribute("signupSuccess", true);
             return "redirect:/login";
         } else {
