@@ -87,9 +87,9 @@ public class HomeController {
             int userId = this.userService.getUser(authentication.getName()).getUserId();
             Files file = new Files(null, filename, contentType, fileSize, userId, fileBytes);
             double size = Double.parseDouble(file.getFilesize());
-            double MB_5 = 5242880;
+            double MB_4 = 4000000;
             //The file size shouldn't exceed 5MB
-            if(size>0 && size<MB_5){
+            if(size>0 && size<MB_4){
                 if(file_ID>=1){
                     for(int i=1; i<=file_ID; i++){
                         Files matcher = fileService.getFileById(i);

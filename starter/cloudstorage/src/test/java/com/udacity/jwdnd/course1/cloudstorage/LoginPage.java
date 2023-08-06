@@ -7,43 +7,32 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SignupPage {
+public class LoginPage {
     WebDriverWait wait;
-    @FindBy(id = "inputFirstName")
-    WebElement firstName;
-    @FindBy(id = "inputLastName")
-    WebElement lastName;
+
     @FindBy(id = "inputUsername")
     WebElement userName;
     @FindBy(id = "inputPassword")
     WebElement password;
-    @FindBy(id = "buttonSignUp")
-    WebElement signUp;
+    @FindBy(id = "login-button")
+    WebElement login_button;
 
-    public SignupPage(WebDriver driver) {
+    public LoginPage(WebDriver driver) {
         PageFactory.initElements(driver,this);
         wait = new WebDriverWait(driver,2);
     }
 
-    public void userRegistration(String firstname, String lastname, String username, String passWord){
-        //firstname
-        wait.until(ExpectedConditions.visibilityOf(firstName));
-        firstName.click();
-        firstName.sendKeys(firstname);
-        //lastname
-        wait.until(ExpectedConditions.visibilityOf(lastName));
-        lastName.click();
-        lastName.sendKeys(lastname);
-        //username
+    public void login(String username, String passWord){
+        //Username
         wait.until(ExpectedConditions.visibilityOf(userName));
         userName.click();
         userName.sendKeys(username);
-        //password
+        //Password
         wait.until(ExpectedConditions.visibilityOf(password));
         password.click();
         password.sendKeys(passWord);
-        //submit
-        wait.until(ExpectedConditions.visibilityOf(signUp));
-        signUp.click();
+        //Submit
+        wait.until(ExpectedConditions.visibilityOf(login_button));
+        login_button.click();
     }
 }

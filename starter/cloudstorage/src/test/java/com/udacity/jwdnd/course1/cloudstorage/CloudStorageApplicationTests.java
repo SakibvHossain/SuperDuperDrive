@@ -34,6 +34,8 @@ class CloudStorageApplicationTests {
 	private WebDriver driver;
 	private CredentialPage credentialPage;
 	private SignupPage signupPage;
+	private LoginPage loginPage;
+	private WebDriverWait wait;
 	@Autowired
 	private CredentialService credentialService;
 
@@ -48,6 +50,8 @@ class CloudStorageApplicationTests {
 		this.driver = new ChromeDriver();
 		credentialPage = new CredentialPage(driver, credentialService);
 		signupPage = new SignupPage(driver);
+		loginPage = new LoginPage(driver);
+		wait = new WebDriverWait(driver,2);
 	}
 
 	@AfterEach
@@ -64,7 +68,18 @@ class CloudStorageApplicationTests {
 	@Test
 	public void Verifying(){
 		checkingUnauthorizedAccessTest();
-		authorizingUserTest("ai","ai","ai","ai");
+		driver.get("http://localhost:"+this.port+"/signup");
+		signupPage.userRegistration("sk","sk","sk","sk");
+		//Login
+		loginPage.login("sk","sk");
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout_button")));
+		WebElement logout_button = driver.findElement(By.id("logout_button"));
+		logout_button.click();
+
+		wait.until(ExpectedConditions.titleContains("Login"));
+		driver.get("http://localhost:"+this.port+"/home");
+		wait.until(ExpectedConditions.titleContains("Login"));
 	}
 
 	//Point - 1: Write a test that verifies that an unauthorized user can only access the login and signup pages.
@@ -78,70 +93,18 @@ class CloudStorageApplicationTests {
 	}
 
 	//Point - 2: Write a test that signs up a new user, logs in, verifies that the home page is accessible, logs out, and verifies that the home page is no longer accessible.
-	private void authorizingUserTest(String firstName, String lastName, String userName, String password){
-		//We need to wait because web can view few minutes later right that can be a reason for our test failure.
-		WebDriverWait wait = new WebDriverWait(driver,2);
-		signup_Login(firstName,lastName,userName,password);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout_button")));
-		WebElement logout_button = driver.findElement(By.id("logout_button"));
-		logout_button.click();
-		wait.until(ExpectedConditions.titleContains("Login"));
-
-		driver.get("http://localhost:"+this.port+"/home");
-		wait.until(ExpectedConditions.titleContains("Login"));
-
-	}
 
 	//Universal login signup method for testing :)
 	private void signup_Login(String firstName, String lastName, String userName, String password){
-		WebDriverWait wait = new WebDriverWait(driver,2);
+		wait = new WebDriverWait(driver,2);
 		driver.get("http://localhost:"+this.port+"/signup");
 		wait.until(ExpectedConditions.titleContains("Sign Up"));
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputFirstName")));
-		WebElement inputFirstName = driver.findElement(By.id("inputFirstName"));
-		inputFirstName.click();
-		inputFirstName.sendKeys(firstName);
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputLastName")));
-		WebElement inputLastName = driver.findElement(By.id("inputLastName"));
-		inputLastName.click();
-		inputLastName.sendKeys(lastName);
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
-		WebElement inputUsername = driver.findElement(By.id("inputUsername"));
-		inputUsername.click();
-		inputUsername.sendKeys(userName);
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
-		WebElement inputPassword = driver.findElement(By.id("inputPassword"));
-		inputPassword.click();
-		inputPassword.sendKeys(password);
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonSignUp")));
-		WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
-		buttonSignUp.click();
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("redirectToLogin")));
-		WebElement redirectToLogin = driver.findElement(By.id("redirectToLogin"));
-		redirectToLogin.click();
-
-		wait.until(ExpectedConditions.titleContains("Login"));
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
-		WebElement loginUsername = driver.findElement(By.id("inputUsername"));
-		loginUsername.click();
-		loginUsername.sendKeys(userName);
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
-		WebElement loginPassword = driver.findElement(By.id("inputPassword"));
-		loginPassword.click();
-		loginPassword.sendKeys(password);
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-button")));
-		WebElement login_button = driver.findElement(By.id("login-button"));
-		login_button.click();
-
+		//Signup
+		signupPage.userRegistration(firstName,lastName,userName,password);
+		//Login
+		loginPage.login(userName,password);
+		//Checking if this is the home page we have redirected
 		wait.until(ExpectedConditions.titleContains("Home"));
 	}
 
@@ -233,7 +196,13 @@ class CloudStorageApplicationTests {
 	//Best test
 	@Test
 	public void CredentialTesting(){
-		signup_Login("ds","ds","ds","ds");
+		wait = new WebDriverWait(driver,2);
+		driver.get("http://localhost:"+this.port+"/signup");
+		//Signup
+		signupPage.userRegistration("ds","ds","ds","ds");
+		//Login
+		loginPage.login("ds","ds");
+		wait.until(ExpectedConditions.titleContains("Home"));
 		credentialCreation();
 	}
 
@@ -277,23 +246,9 @@ class CloudStorageApplicationTests {
 	{
 		// Log in to our dummy account.
 		driver.get("http://localhost:" + this.port + "/login");
-		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
-		WebElement loginUserName = driver.findElement(By.id("inputUsername"));
-		loginUserName.click();
-		loginUserName.sendKeys(userName);
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
-		WebElement loginPassword = driver.findElement(By.id("inputPassword"));
-		loginPassword.click();
-		loginPassword.sendKeys(password);
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-button")));
-		WebElement loginButton = driver.findElement(By.id("login-button"));
-		loginButton.click();
-
-		webDriverWait.until(ExpectedConditions.titleContains("Home"));
+		//login
+		loginPage.login(userName,password);
+		wait.until(ExpectedConditions.titleContains("Home"));
 
 	}
 
@@ -311,12 +266,10 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testRedirection() {
 		// Create a test account
-		signupPage.doMockSignUp("Redirection","Test","RT","123");
+		driver.get("http://localhost:" + this.port + "/signup");
+		signupPage.userRegistration("Redirection","Test","RT","123");
 		
 		// Check if we have been redirected to the login page.
-
-
-
 		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
 	}
 
@@ -338,7 +291,7 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/signup");
 		webDriverWait.until(ExpectedConditions.titleContains("Sign Up"));
 		// Create a test account
-		signupPage.doMockSignUp("URL","Test","UT","123");
+		signupPage.userRegistration("URL","Test","UT","123");
 		doLogIn("UT", "123");
 		// Try to access a random made-up URL.
 		driver.get("http://localhost:" + this.port + "/some-random-page");
@@ -364,7 +317,7 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/signup");
 		webDriverWait.until(ExpectedConditions.titleContains("Sign Up"));
 		// Create a test account
-		signupPage.doMockSignUp("Large File","Test","LFT","123");
+		signupPage.userRegistration("Large File","Test","LFT","123");
 		doLogIn("LFT", "123");
 
 		// Try to upload an arbitrary large file
@@ -382,6 +335,5 @@ class CloudStorageApplicationTests {
 			System.out.println("Large File upload failed");
 		}
 		Assertions.assertTrue(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
-
 	}
 }
