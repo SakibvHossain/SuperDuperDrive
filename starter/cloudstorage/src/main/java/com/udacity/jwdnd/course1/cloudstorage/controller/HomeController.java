@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/home")
 public class HomeController {
 
+    public static int file_ID = 0;
+    public static boolean will_upload = false;
     private UserService userService;
     private FileService fileService;
     private NoteService noteService;
@@ -76,29 +79,54 @@ public class HomeController {
 
         if(fileForm.getFileUpload() != null){
         try {
+            String uploadError = "Error occurs";
             String filename = fileForm.getFileUpload().getOriginalFilename();
             String contentType = fileForm.getFileUpload().getContentType();
             byte[] fileBytes = fileForm.getFileUpload().getBytes();
             String fileSize = String.valueOf(fileForm.getFileUpload().getSize());
             int userId = this.userService.getUser(authentication.getName()).getUserId();
             Files file = new Files(null, filename, contentType, fileSize, userId, fileBytes);
-            this.fileService.addFile(file);
-            System.out.println(Arrays.toString(fileBytes));
-            System.out.println("File size: "+file.getFilesize());
-            model.addAttribute("fileList", this.fileService.getFiles());
-            model.addAttribute("noteList", this.noteService.getNotes());
+            double size = Double.parseDouble(file.getFilesize());
+            double MB_5 = 5242880;
+            //The file size shouldn't exceed 5MB
+            if(size>0 && size<MB_5){
+                if(file_ID>=1){
+                    for(int i=1; i<=file_ID; i++){
+                        Files matcher = fileService.getFileById(i);
+                        will_upload = !Objects.equals(file.getFilename(), matcher.getFilename());
+                    }
+                    if(will_upload){
+                        file_ID++;
+                        this.fileService.addFile(file);
+                        System.out.println("file count: "+file_ID);
+                        System.out.println("Field ID: "+file.getFileid());
+                        System.out.println("File size: "+file.getFilesize());
+                        model.addAttribute("fileList", this.fileService.getFiles());
+                        model.addAttribute("noteList", this.noteService.getNotes());
+                    }else{
+                        System.out.println("Print nothing!");
+                    }
+
+                }else{
+                    file_ID++;
+                    this.fileService.addFile(file);
+                    System.out.println("file count: "+file_ID);
+                    System.out.println("Field ID: "+file.getFileid());
+                    System.out.println("File size: "+file.getFilesize());
+                    model.addAttribute("fileList", this.fileService.getFiles());
+                    model.addAttribute("noteList", this.noteService.getNotes());
+                }
+            }else{
+                model.addAttribute("signupError", true);
+            }
         } catch(IOException ioException){
             System.out.println(ioException.getMessage());
         }
     }
         return "home";
     }
+
     //Getting the request to view. Actually it downloads and view. For now lets say view.
-
-
-
-
-
     @GetMapping("/file/view/{fileId}")
     public ResponseEntity<byte[]> viewed(@PathVariable("fileId") Integer fileId, Model model){
         System.out.println("File " + fileId + "is viewed");
@@ -112,9 +140,6 @@ public class HomeController {
     //Getting the request to delete. This is just used to delete from file, note, or credential List.
 
     //Deleting Files
-
-
-
     @GetMapping("/file/delete/{fileId}")
     public String deleted(@PathVariable("fileId") Integer fileId, Model model){
         System.out.println("File " + fileId + " is deleted");
