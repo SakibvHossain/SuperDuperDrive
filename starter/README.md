@@ -129,6 +129,9 @@ You aren't required to understand hashing or encryption and that's why your tech
 All of us here at Super*Duper*Drive wish you good luck with the project!
 
 # Result
+### Project Review
+[Give your project another try!](https://nothing.com)
+[Passed](https://nothing.com)
 
 ### Sign up
 ![1](https://github.com/XSakibxHossainX/SuperDuperDrive/assets/92059000/a00b763d-2f62-4136-b3f7-289ac7881f26)
