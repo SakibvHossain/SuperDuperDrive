@@ -130,6 +130,8 @@ All of us here at Super*Duper*Drive wish you good luck with the project!
 
 # Result
 ### Project Review
+[Project submission_1.pdf](https://github.com/XSakibxHossainX/SuperDuperDrive/files/12274776/Project.submission_1.pdf)
+[Project submission_2.pdf](https://github.com/XSakibxHossainX/SuperDuperDrive/files/12274788/Project.submission_2.pdf)
 
 
 ### Sign up
