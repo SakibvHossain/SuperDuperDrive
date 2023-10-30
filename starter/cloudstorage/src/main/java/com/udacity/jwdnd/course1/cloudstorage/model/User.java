@@ -17,6 +17,12 @@ public class User {
         this.lastName = lastName;
     }
 
+    public User(Integer userId, String username, String password) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+    }
+
     public Integer getUserId(){
         return userId;
     }
