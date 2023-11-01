@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -15,7 +16,7 @@ import java.util.Base64;
 
 @Service
 public class EncryptionService {
-    private Logger logger = LoggerFactory.getLogger(EncryptionService.class);
+    private final Logger logger = LoggerFactory.getLogger(EncryptionService.class);
 
     public String encryptValue(String data, String key) {
         byte[] encryptedValue = null;
@@ -24,9 +25,9 @@ public class EncryptionService {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            encryptedValue = cipher.doFinal(data.getBytes("UTF-8"));
+            encryptedValue = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
-                | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
+                 | IllegalBlockSizeException | BadPaddingException e) {
             logger.error(e.getMessage());
         }
 

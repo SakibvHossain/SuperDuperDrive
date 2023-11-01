@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.mapper;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.Notes;
 import org.apache.ibatis.annotations.*;
 
@@ -9,6 +10,9 @@ import java.util.List;
 public interface NoteMapper {
     @Select("SELECT * FROM NOTES")
     List<Notes> getNotes();
+
+    @Select("SELECT * FROM NOTES WHERE userId = #{userId}")
+    List<Notes> getCreatedNotes(Integer userId);
 
     @Insert("INSERT INTO NOTES (notetitle, notedescription, userid) VALUES(#{notetitle}, #{notedescription}, #{userid})")
     @Options(useGeneratedKeys = true, keyProperty = "noteid")

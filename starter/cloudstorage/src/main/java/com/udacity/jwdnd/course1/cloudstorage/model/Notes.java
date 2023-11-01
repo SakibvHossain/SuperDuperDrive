@@ -6,14 +6,6 @@ public class Notes {
     private String notedescription;
     private Integer userid;
 
-    //    public Notes(Integer credentialid, String url, String username, String key, String password, Integer userid) {
-//        this.credentialid = credentialid;
-//        this.url = url;
-//        this.username = username;
-//        this.key = key;
-//        this.password = password;
-//        this.userid = userid;
-//    }
     public Integer getId(){
         return this.noteid;
     }

@@ -21,9 +21,9 @@ public class HomeController {
 
     public static int file_ID = 0;
     public static boolean will_upload = false;
-    private UserService userService;
-    private FileService fileService;
-    private NoteService noteService;
+    private final UserService userService;
+    private final FileService fileService;
+    private final NoteService noteService;
     private final CredentialService credentialService;
     private final EncryptionService encryptionService;
 
@@ -40,6 +40,7 @@ public class HomeController {
         User user = userService.getUser(authentication.getName());
         model.addAttribute("encryptionService",encryptionService);
         model.addAttribute("credentials", credentialService.getCredentials(user.getUserId()));
+        model.addAttribute("noteList", noteService.getCreatedNotes(user.getUserId()));
         return "home";
     }
 
@@ -87,9 +88,9 @@ public class HomeController {
             int userId = this.userService.getUser(authentication.getName()).getUserId();
             Files file = new Files(null, filename, contentType, fileSize, userId, fileBytes);
             double size = Double.parseDouble(file.getFilesize());
-            double MB_4 = 4000000;
+            double MB_7 = 7000000;
             //The file size shouldn't exceed 5MB
-            if(size>0 && size<MB_4){
+            if(size>0 && size<MB_7){
                 if(file_ID>=1){
                     for(int i=1; i<=file_ID; i++){
                         Files matcher = fileService.getFileById(i);
@@ -119,6 +120,23 @@ public class HomeController {
             }else{
                 model.addAttribute("signupError", true);
             }
+
+
+//            if(size>0 && size<MB_7){
+//                    file_ID++;
+//                    this.fileService.addFile(file);
+//                    System.out.println("file count: "+file_ID);
+//                    System.out.println("File name: "+ file.getFilename());
+//                    System.out.println("Field ID: "+file.getFileid());
+//                    System.out.println("File size: "+file.getFilesize());
+//                    model.addAttribute("fileList", this.fileService.getFiles());
+//                    model.addAttribute("noteList", this.noteService.getNotes());
+
+//            }else{
+//                model.addAttribute("signupError", true);
+//            }
+
+
         } catch(IOException ioException){
             System.out.println(ioException.getMessage());
         }
