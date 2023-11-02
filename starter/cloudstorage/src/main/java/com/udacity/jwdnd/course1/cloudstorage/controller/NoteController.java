@@ -1,8 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
-import com.udacity.jwdnd.course1.cloudstorage.model.Note;
-import com.udacity.jwdnd.course1.cloudstorage.model.User;
+import com.udacity.jwdnd.course1.cloudstorage.model.*;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
@@ -10,80 +8,71 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-
 @Controller
-@RequestMapping("/notes")
+@RequestMapping("note")
 public class NoteController {
+
     private final NoteService noteService;
     private final UserService userService;
-    public String noteError = null;
-    public String noteSuccess = null;
 
     public NoteController(NoteService noteService, UserService userService) {
         this.noteService = noteService;
         this.userService = userService;
     }
 
-    @PostMapping
-    public String createNote(@ModelAttribute Note note, Authentication authentication, Model model){
-        this.noteError = null;
-        this.noteSuccess = null;
-        User user = userService.getUser(authentication.getName());
-        Integer userId = user.getUserId();
-        note.setUserId(userId);
-        int rowsAdded = noteService.createNote(note);
-        if (rowsAdded < 0){
-            this.noteError = "There was an error for adding a note. Please try again";
-        }
-        if (this.noteError == null) {
-            model.addAttribute("noteSuccess", "You successfully added a new note");
-        } else {
-            model.addAttribute("noteError", this.noteError);
-        }
+    @GetMapping
+    public String getHomePage(
+            Authentication authentication, @ModelAttribute("newFile") FileForm newFile, @ModelAttribute("newNote") NoteForm newNote,
+            @ModelAttribute("newCredential") CredentialForm newCredential, Model model) {
+        Integer userId = getUserId(authentication);
+        model.addAttribute("notes", this.noteService.getNoteListings(userId));
 
-        return "redirect:/home";
+        return "home";
     }
 
-    @PutMapping
-    public String updateNote(@ModelAttribute Note note, Authentication authentication, Model model){
-        System.out.println("i m in update note");
-        this.noteError = null;
-        this.noteSuccess = null;
-        User user = userService.getUser(authentication.getName());
-        Integer userId = user.getUserId();
-        note.setUserId(userId);
-        int rowsUpdated = noteService.updateNote(note);
-        if (rowsUpdated < 0){
-            this.noteError = "There was an error for updating a note. Please try again";
-        }
-        if (this.noteError == null) {
-            model.addAttribute("noteSuccess", "You successfully updated a note");
-        } else {
-            model.addAttribute("noteError", this.noteError);
-        }
-
-        return "redirect:/home";
+    private Integer getUserId(Authentication authentication) {
+        String userName = authentication.getName();
+        User user = userService.getUser(userName);
+        return user.getUserId();
     }
 
-    @DeleteMapping
-    public String deleteNote(@ModelAttribute Note note, Authentication authentication, Model model){
-        System.out.println("i m in delete note");
-        this.noteError = null;
-        this.noteSuccess = null;
-        User user = userService.getUser(authentication.getName());
-        Integer userId = user.getUserId();
-        note.setUserId(userId);
-        int rowsUpdated = noteService.deleteNote(note.getNoteId());
-        if (rowsUpdated < 0){
-            this.noteError = "There was an error deleting a note. Please try again";
-        }
-        if (this.noteError == null) {
-            model.addAttribute("noteSuccess", "You successfully deleted a note");
+    @PostMapping("add-note")
+    public String newNote(
+            Authentication authentication, @ModelAttribute("newFile") FileForm newFile,
+            @ModelAttribute("newNote") NoteForm newNote, @ModelAttribute("newCredential") CredentialForm newCredential,
+            Model model) {
+        String userName = authentication.getName();
+        String newTitle = newNote.getTitle();
+        String noteIdStr = newNote.getNoteId();
+        String newDescription = newNote.getDescription();
+        if (noteIdStr.isEmpty()) {
+            noteService.addNote(newTitle, newDescription, userName);
         } else {
-            model.addAttribute("noteError", this.noteError);
+            Note existingNote = getNote(Integer.parseInt(noteIdStr));
+            noteService.updateNote(existingNote.getNoteId(), newTitle, newDescription);
         }
+        Integer userId = getUserId(authentication);
+        model.addAttribute("notes", noteService.getNoteListings(userId));
+        model.addAttribute("result", "success");
 
-        return "redirect:/home";
+        return "result";
+    }
 
+    @GetMapping(value = "/get-note/{noteId}")
+    public Note getNote(@PathVariable Integer noteId) {
+        return noteService.getNote(noteId);
+    }
+
+    @GetMapping(value = "/delete-note/{noteId}")
+    public String deleteNote(
+            Authentication authentication, @PathVariable Integer noteId, @ModelAttribute("newNote") NoteForm newNote,
+            @ModelAttribute("newFile") FileForm newFile, @ModelAttribute("newCredential") CredentialForm newCredential,
+            Model model) {
+        noteService.deleteNote(noteId);
+        Integer userId = getUserId(authentication);
+        model.addAttribute("notes", noteService.getNoteListings(userId));
+        model.addAttribute("result", "success");
+
+        return "result";
     }
 }
