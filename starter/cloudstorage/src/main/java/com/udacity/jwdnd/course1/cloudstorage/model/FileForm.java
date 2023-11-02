@@ -3,17 +3,13 @@ package com.udacity.jwdnd.course1.cloudstorage.model;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileForm {
-    private MultipartFile fileUpload;
+    private MultipartFile file;
 
-    public FileForm(){
-
+    public MultipartFile getFile() {
+        return file;
     }
 
-    public MultipartFile getFileUpload(){
-        return fileUpload;
-    }
-
-    public void setFileUpload(MultipartFile fileUpload){
-        this.fileUpload = fileUpload;
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 }
