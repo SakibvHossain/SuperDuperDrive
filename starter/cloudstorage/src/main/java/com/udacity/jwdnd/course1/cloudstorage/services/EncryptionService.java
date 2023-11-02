@@ -8,15 +8,13 @@ import org.springframework.stereotype.Service;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Base64;
 
 @Service
 public class EncryptionService {
-    private final Logger logger = LoggerFactory.getLogger(EncryptionService.class);
+    private Logger logger = LoggerFactory.getLogger(EncryptionService.class);
 
     public String encryptValue(String data, String key) {
         byte[] encryptedValue = null;
@@ -25,14 +23,15 @@ public class EncryptionService {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            encryptedValue = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            encryptedValue = cipher.doFinal(data.getBytes("UTF-8"));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
-                 | IllegalBlockSizeException | BadPaddingException e) {
+                | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
             logger.error(e.getMessage());
         }
 
         return Base64.getEncoder().encodeToString(encryptedValue);
     }
+
     public String decryptValue(String data, String key) {
         byte[] decryptedValue = null;
 
@@ -45,13 +44,7 @@ public class EncryptionService {
                 | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             logger.error(e.getMessage());
         }
+
         return new String(decryptedValue);
-    }
-    public String generateKey() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] key = new byte[16];
-        secureRandom.nextBytes(key);
-        String encodedKey = Base64.getEncoder().encodeToString(key);
-        return encodedKey;
     }
 }
