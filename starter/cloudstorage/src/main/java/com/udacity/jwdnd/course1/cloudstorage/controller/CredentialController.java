@@ -1,7 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
-import com.udacity.jwdnd.course1.cloudstorage.model.User;
+import com.udacity.jwdnd.course1.cloudstorage.model.*;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -14,105 +13,80 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 @Controller
-@RequestMapping("/credentials")
+@RequestMapping("credential")
 public class CredentialController {
-    private final CredentialService credentialService;
-    private final UserService userService;
-    private final EncryptionService encryptionService;
-    public String credentialError = null;
-    public String credentialSuccess = null;
 
-    public CredentialController(CredentialService credentialService, UserService userService, EncryptionService encryptionService) {
+    private final CredentialService credentialService;
+    private final EncryptionService encryptionService;
+    private final UserService userService;
+
+    public CredentialController(CredentialService credentialService, EncryptionService encryptionService, UserService userService) {
         this.credentialService = credentialService;
-        this.userService = userService;
         this.encryptionService = encryptionService;
+        this.userService = userService;
     }
 
-    @PostMapping
-    public String createCredential(@ModelAttribute Credential credential, Authentication authentication, Model model){
-        System.out.println("i m in create cred");
-        this.credentialError = null;
-        this.credentialSuccess = null;
-        User user = userService.getUser(authentication.getName());
-        Integer userId = user.getUserId();
-        credential.setUserId(userId);
+    @GetMapping
+    public String getHomePage(
+            Authentication authentication, @ModelAttribute("newFile") FileForm newFile,
+            @ModelAttribute("newCredential") CredentialForm newCredential,
+            @ModelAttribute("newNote") NoteForm newNote, Model model) {
+        String userName = authentication.getName();
+        User user = userService.getUser(userName);
+        model.addAttribute("credentials", this.credentialService.getCredentialListings(user.getUserId()));
+        model.addAttribute("encryptionService", encryptionService);
+
+        return "home";
+    }
+
+    @PostMapping("add-credential")
+    public String newCredential(
+            Authentication authentication, @ModelAttribute("newFile") FileForm newFile,
+            @ModelAttribute("newCredential") CredentialForm newCredential,
+            @ModelAttribute("newNote") NoteForm newNote, Model model) {
+        String userName = authentication.getName();
+        String newUrl = newCredential.getUrl();
+        String credentialIdStr = newCredential.getCredentialId();
+        String password = newCredential.getPassword();
+
         SecureRandom random = new SecureRandom();
         byte[] key = new byte[16];
         random.nextBytes(key);
         String encodedKey = Base64.getEncoder().encodeToString(key);
-        credential.setKey(encodedKey);
-        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
-        credential.setPassword(encryptedPassword);
-//        String decryptedPassword = encryptionService.decryptValue(encryptedPassword, encodedKey);
-        int rowsAdded = credentialService.createCredential(credential);
-        if (rowsAdded < 0){
-            this.credentialError = "There was an error for adding a credential. Please try again";
-        }
-        if (this.credentialError == null) {
-            model.addAttribute("credentialSuccess", "You successfully added a new note");
-        } else {
-            model.addAttribute("credentialError", this.credentialError);
-        }
+        String encryptedPassword = encryptionService.encryptValue(password, encodedKey);
 
-        Credential credential1 = credentialService.getCredentialById(1);
-        System.out.println("Get the credential ID: "+credential1.getCredentialId());
-        System.out.println("UserID: "+credential.getUserId());
-        System.out.println("Credential ID: "+credential.getCredentialId());
-        System.out.println("Username: "+credential.getUsername());
-        System.out.println("Key: "+credential.getKey());
-        System.out.println("password: "+credential.getPassword());
-        return "redirect:/home";
+        if (credentialIdStr.isEmpty()) {
+            credentialService.addCredential(newUrl, userName, newCredential.getUserName(), encodedKey, encryptedPassword);
+        } else {
+            Credential existingCredential = getCredential(Integer.parseInt(credentialIdStr));
+            credentialService.updateCredential(existingCredential.getCredentialid(), newCredential.getUserName(), newUrl, encodedKey, encryptedPassword);
+        }
+        User user = userService.getUser(userName);
+        model.addAttribute("credentials", credentialService.getCredentialListings(user.getUserId()));
+        model.addAttribute("encryptionService", encryptionService);
+        model.addAttribute("result", "success");
+
+        return "result";
     }
 
-    @PostMapping("/edit")
-    public String updateCredential(@ModelAttribute Credential credential, Authentication authentication, Model model){
-        System.out.println("i m in update note");
-        this.credentialError = null;
-        this.credentialSuccess = null;
-        User user = userService.getUser(authentication.getName());
-        Integer userId = user.getUserId();
-        credential.setUserId(userId);
-
-//        System.out.println(credential.getDecryptedPassword());
-        System.out.println(model.getAttribute("credential-password"));
-//        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), credential.getKey());
-//        credential.setPassword(encryptedPassword);
-
-
-        credential.setPassword(encryptionService.encryptValue(credential.getPassword(), credential.getKey()));
-
-        int rowsUpdated = credentialService.updateCredential(credential);
-        if (rowsUpdated < 0){
-            this.credentialError = "There was an error for updating a credential. Please try again";
-        }
-        if (this.credentialError == null) {
-            model.addAttribute("credentialSuccess", "You successfully updated a note");
-        } else {
-            model.addAttribute("credentialError", this.credentialError);
-        }
-        return "redirect:/home";
+    @GetMapping(value = "/get-credential/{credentialId}")
+    public Credential getCredential(@PathVariable Integer credentialId) {
+        return credentialService.getCredential(credentialId);
     }
 
-    @PostMapping("/delete")
-    public String deleteCredential(@ModelAttribute Credential credential, Authentication authentication, Model model){
-        System.out.println("i m in delete note");
-        this.credentialError = null;
-        this.credentialSuccess = null;
-        User user = userService.getUser(authentication.getName());
-        Integer userId = user.getUserId();
-        credential.setUserId(userId);
-        int rowsUpdated = credentialService.deleteCredential(credential.getCredentialId());
-        if (rowsUpdated < 0){
-            this.credentialError = "There was an error deleting a credential. Please try again";
-        }
-        if (this.credentialError == null) {
-            model.addAttribute("credentialSuccess", "You successfully deleted a credential");
-        } else {
-            model.addAttribute("credentialError", this.credentialError);
-        }
+    @GetMapping(value = "/delete-credential/{credentialId}")
+    public String deleteCredential(
+            Authentication authentication, @PathVariable Integer credentialId,
+            @ModelAttribute("newCredential") CredentialForm newCredential,
+            @ModelAttribute("newFile") FileForm newFile,
+            @ModelAttribute("newNote") NoteForm newNote, Model model) {
+        credentialService.deleteCredential(credentialId);
+        String userName = authentication.getName();
+        User user = userService.getUser(userName);
+        model.addAttribute("credentials", credentialService.getCredentialListings(user.getUserId()));
+        model.addAttribute("encryptionService", encryptionService);
+        model.addAttribute("result", "success");
 
-        return "redirect:/home";
-
+        return "result";
     }
-
 }
