@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="edit-note">
+    <div class="modal fade" id="editNoteModal" tabindex="-1" role="dialog" aria-labelledby="editNoteModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editNoteModal-header">Edit a Note</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/notes}" th:method="PUT">
+                        <input type="hidden" name="noteId" id="edit-note-id">
+                        <div class="form-group">
+                            <label for="edit-note-title" class="col-form-label">Title</label>
+                            <input type="text" name= "title" class="form-control" id="edit-note-title" maxlength="20" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-note-description" class="col-form-label">Description</label>
+                            <textarea class="form-control" name="description" id="edit-note-description" rows="5" maxlength="1000" required></textarea>
+                        </div>
+                        <button id="editNoteSubmit" type="submit" class="d-none"></button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="$('#editNoteSubmit').click();">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
