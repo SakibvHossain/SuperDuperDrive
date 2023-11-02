@@ -15,21 +15,22 @@
             </div>
 
             <h1 class="display-5">Sign Up</h1>
-            <form th:action="@{/signup}" action="#" method="POST">
+            <form action="#" th:action="@{/signup}" method="POST">
                 <div id="success-msg" th:if="${signupSuccess}" class="alert alert-dark">
-                    You successfully signed up! Please continue to the <a id="redirectToLogin" th:href="@{/login}">login</a> page.
+                    You successfully signed up! In a moment you will be redirected to the <a id="login-link" th:href="@{/login}">login</a> page.
+                    <meta http-equiv="refresh" content="5; URL=/login" />
                 </div>
                 <div id="error-msg" th:if="${signupError}" class="alert alert-danger">
-                    <span>User Already Exist</span>
+                    <span th:text="${signupError}"></span>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputFirstName">First Name</label>
-                        <input type="input" name="firstname" class="form-control" id="inputFirstName" placeholder="Enter First Name" maxlength="20" required>
+                        <input type="input" name="firstName" class="form-control" id="inputFirstName" placeholder="Enter First Name" maxlength="20" required>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputLastName">Last Name</label>
-                        <input type="input" name="lastname" class="form-control" id="inputLastName" placeholder="Enter Last Name" maxlength="20" required>
+                        <input type="input" name="lastName" class="form-control" id="inputLastName" placeholder="Enter Last Name" maxlength="20" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -42,7 +43,7 @@
                         <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Enter Password" maxlength="20" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary" id="buttonSignUp">Sign Up</button>
+                <button id="submit-button" type="submit" class="btn btn-primary">Sign Up</button>
             </form>
         </div>
     </body>
