@@ -74,14 +74,14 @@ public class HomeController {
         }
         if (!fileIsDuplicate) {
             fileService.addFile(multipartFile, userName);
-            model.addAttribute("result", "success");
+//            model.addAttribute("result", "success");
         } else {
-            model.addAttribute("result", "error");
+//            model.addAttribute("result", "error");
             model.addAttribute("message", "You have tried to add a duplicate file.");
         }
         model.addAttribute("files", fileService.getFileListings(userId));
 
-        return "result";
+        return "home";
     }
 
     @GetMapping(
@@ -101,8 +101,8 @@ public class HomeController {
         fileService.deleteFile(fileName);
         Integer userId = getUserId(authentication);
         model.addAttribute("files", fileService.getFileListings(userId));
-        model.addAttribute("result", "success");
+//        model.addAttribute("result", "success");
 
-        return "result";
+        return "home";
     }
 }
